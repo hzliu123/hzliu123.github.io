@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 36</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text34.html">Back</a> <a href="text36.html">Continue</a> <a href="text120.html">Last page</a> <a href="gdb_tutorial.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#280099">Multi-thread execution control:
+All-stop mode</font></h1>
+<ul><li style="direction:ltr;"><h2>When any thread stops (hit a breakpoint, single stepping, etc), all other threads are also stopped</h2></li>
+<li style="direction:ltr;"><h2>When you restart the program, all threads start executing (even when single-stepping)</h2></li>
+<ul><li style="direction:ltr;">This behavior can be modified by: 
+set scheduler-locking <i>mode</i></li>
+<ul><li style="direction:ltr;">Off: other threads may preempt at any time</li>
+<li style="direction:ltr;">On: no thread except the current thread may run</li>
+<li style="direction:ltr;">Step: 'On' mode during step operation; 'Off' mode otherwise.</li>
+</ul></ul></ul></body>
+</html>

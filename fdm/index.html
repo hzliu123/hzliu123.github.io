@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Language" content="zh-tw">
+  <meta http-equiv="Content-Type" content="text/html; charset=big5">
+  <title>Scalable Locality-Aware Event Dispatching Mechanism for
+Network Servers</title>
+  <meta content="Hao-Ran Liu" name="author">
+  <meta
+ content="user mode strategies to improve the efficiency of event dispatching in network servers"
+ name="description">
+</head>
+<body>
+<p align="center"><b><font style="font-size: 20pt;">Scalable
+Locality-Aware Event Dispatching Mechanism for Network Servers </font><font
+ size="5">&nbsp;&nbsp;
+</font></b></p>
+<p align="center"><font size="4">Hao-Ran Liu and Tien-Fu Chen</font></p>
+<p align="center"><font size="4">Department of Computer Science,
+National Chung Cheng University, Taiwan</font></p>
+<hr>
+<p align="center"><font size="4"><b>Abstract</b></font></p>
+<p style="line-height: 150%;" align="left">Network servers often need
+to process a large amount of network events asynchronously. They
+usually use select() or poll() to retrieve events from file
+descriptors. However, previous researches have shown that these system
+calls scale poorly when the number of open connections are
+significantly increased. Several kernel-level solutions have been
+proposed. In this paper, we first compare several event dispatching
+mechanisms available under Linux, and then present our user-level
+solution that takes advantage of temporal locality among events while
+polling. We show that a memory-based web server with our approach can
+have about 20%-30% performance improvement.<br>
+　</p>
+<hr>
+<p align="left">The <a href="fdm-iee04.pdf">paper</a> published in IEE
+Proceedings, Software, 2004</p>
+<p align="left">The <a href="fdm-icos02-slide.pdf">slides</a> for
+ICOS'02</p>
+<p align="left">Related software in this paper:</p>
+<ol>
+  <li>
+    <p style="line-height: 150%;" align="left"><a href="fdm.zip">FDM
+Library source</a> </p>
+  </li>
+  <li>
+    <p style="line-height: 150%;" align="left"><a href="server.zip">Test
+web server source</a> (with event driven threading code) </p>
+  </li>
+  <li>
+    <p style="line-height: 150%;" align="left">C source code to <a
+ href="deadconn_last.c">make dead connections</a>. </p>
+  </li>
+  <li>
+    <p align="left"><a href="httperf-0.8.tar.gz">httperf </a>Web
+server Performance measurement tool </p>
+  </li>
+  <li>
+    <p align="left">Original <a href="dphttpd_last.tar.gz">dphttpd
+server</a> source
+    </p>
+  </li>
+</ol>
+<p align="left">　</p>
+</body>
+</html>

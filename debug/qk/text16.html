@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 17</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text15.html">Back</a> <a href="text17.html">Continue</a> <a href="text25.html">Last page</a> <a href="kgdb_and_qemu.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#000080">Using KDB on serial port</font></h1>
+<ul><li style="direction:ltr;"><h2>Configure I/O driver</h2></li>
+<ul><li style="direction:ltr;">Boot kernel with kgdboc parameters or</li>
+<li style="direction:ltr;">Configure kgdboc via sysfs</li>
+</ul><li style="direction:ltr;"><h2>Enter the kernel debugger manually by sending a sysrq-g or by waiting for an oops or fault</h2></li>
+<ul><li style="direction:ltr;">echo g &gt; /proc/sysrq-trigger</li>
+<li style="direction:ltr;">Minicom: Ctrl-a, f, g</li>
+<li style="direction:ltr;">Telnet: Ctrl-], send break&lt;RET&gt;, g</li>
+</ul><li style="direction:ltr;"><h2>At KDB prompt, enter “help” to see a list of commands, “go” to resume kernel execution</h2></li>
+</ul></body>
+</html>

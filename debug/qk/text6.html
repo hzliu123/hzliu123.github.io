@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 7</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text5.html">Back</a> <a href="text7.html">Continue</a> <a href="text25.html">Last page</a> <a href="kgdb_and_qemu.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#000080">QEMU Usage Examples</font></h1>
+<ul><li style="direction:ltr;"><h2>Install Fedora PPC in QEMU</h2></li>
+<ul><li style="direction:ltr;">qemu-system-ppc -monitor stdio -boot d -m 256 -hda ppcdisk.qcow2 -cdrom Fedora-11-ppc-DVD.iso</li>
+</ul><li style="direction:ltr;"><h2>Boot x86_64 Linux kernel directly</h2></li>
+<ul><li style="direction:ltr;">qemu-system-x86_64 -s -kernel bzImage -initrd root.cpio.gz -nographic -append &quot;console=ttyS0&quot; -serial mon:telnet::2222,server,nowait -daemonize</li>
+<li style="direction:ltr;">QEMU monitor is multiplexed onto the serial port. It can be accessed with key sequence of Ctrl-A, C.</li>
+</ul></ul></body>
+</html>

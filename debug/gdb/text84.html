@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 85</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text83.html">Back</a> <a href="text85.html">Continue</a> <a href="text120.html">Last page</a> <a href="gdb_tutorial.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#280099">Using the gdbserver Program</font></h1>
+<ul><li style="direction:ltr;"><h2>gdbserver [<i>opt</i>] <i>comm</i> <i>program</i> [ <i>args</i> ... ]</h2></li>
+<ul><li style="direction:ltr;">Run gdbserver on the target. It must have a copy of the program to be debugged, including any libraries used</li>
+<li style="direction:ltr;">gdbserver does not need your program's symbol table, so you can strip the program if necessary to save space</li>
+</ul><li style="direction:ltr;"><h2>gdbserver [<i>opt</i>] --attach <i>comm</i> <i>pid</i></h2></li>
+<ul><li style="direction:ltr;">Attach to a running program</li>
+</ul><li style="direction:ltr;"><h2><i>opt</i>: --wrapper <i>wrapper </i>--</h2></li>
+<ul><li style="direction:ltr;">specifies a wrapper to launch programs</li>
+<li style="direction:ltr;">gdbserver --wrapper env LD_PRELOAD=libtest.so -- :2222 ./testprog</li>
+</ul></ul></body>
+</html>

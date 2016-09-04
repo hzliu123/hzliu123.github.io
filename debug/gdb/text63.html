@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 64</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text62.html">Back</a> <a href="text64.html">Continue</a> <a href="text120.html">Last page</a> <a href="gdb_tutorial.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#280099">Memory Region Attributes</font></h1>
+<ul><li style="direction:ltr;"><h2>mem <i>lo_addr</i> <i>hi_addr</i> <i>[mode</i>] [<i>width</i>] [<i>cache</i>]</h2></li>
+<ul><li style="direction:ltr;">Describe special handling required by regions of your target's memory</li>
+<li style="direction:ltr;"><i>mode</i>: ro, wo, rw <i>width</i>: 8, 16, 32, 64 <i>cache</i>: cache, nocache</li>
+</ul><li style="direction:ltr;"><h2>mem auto</h2></li>
+<ul><li style="direction:ltr;">Discard any user changes to the memory regions and use target-supplied regions</li>
+</ul><li style="direction:ltr;"><h2>set mem inaccessible-by-default [on|off]</h2></li>
+<ul><li style="direction:ltr;">If on is specified and there's at least one memory range defined, gdb refuse accesses to memory that is not explicitly described. The default value is on.</li>
+</ul></ul></body>
+</html>

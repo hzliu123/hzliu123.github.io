@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 5</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<center>
+<a href="text0.html">First page</a> <a href="text3.html">Back</a> <a href="text5.html">Continue</a> <a href="text25.html">Last page</a> <a href="kgdb_and_qemu.html">Overview</a> <a href="siframes.html">Graphics</a></center><br>
+<h1 style="direction:ltr;"><font color="#000080">QEMU Parameters (1/2)</font></h1>
+<ul><li style="direction:ltr;"><h2>-hda <i>file</i></h2></li>
+<li style="direction:ltr;"><h2>-kernel <i>file</i> -initrd <i>file</i> -append “<i>cmdline</i>”</h2></li>
+<ul><li style="direction:ltr;">Boot from kernel directly, <i>cmdline</i> is passed to kernel</li>
+</ul><li style="direction:ltr;"><h2>-boot order=<i>drives</i></h2></li>
+<ul><li style="direction:ltr;">Specify boot order</li>
+<li style="direction:ltr;">ex: order=nc, network first then hard disk</li>
+</ul><li style="direction:ltr;"><h2>-serial <i>dev</i></h2></li>
+<ul><li style="direction:ltr;">redirect the virtual serial port to host character device</li>
+<li style="direction:ltr;">ex: -serial tcp::4444,server,nowait, not wait and listen on port 4444</li>
+</ul></ul></body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 1</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(0)">Slide 1</a></p><font color="#000080">Linux Kernel Debugging</font>
+<font color="#000080">QEMU &amp; KGDB</font>
+<font color="#000080"></font>
+<font color="#000080">Hao-Ran Liu</font>
+</div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(1)"><font color="#000080">Agenda</font></a></p><ul><li style="direction:ltr;">Choices of debugging tools</li>
+<li style="direction:ltr;">Setting up QEMU</li>
+<li style="direction:ltr;">QEMU Usage Examples</li>
+<li style="direction:ltr;">Introduction of KGDB &amp; KDB</li>
+<li style="direction:ltr;">KGDB/KDB Configurations</li>
+<li style="direction:ltr;">Using KDB and KGDB</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(2)"><font color="#000080">Choices of debugging tools</font></a></p><ul><li style="direction:ltr;">Add debug code, recompile and run</li>
+<ul><li style="direction:ltr;">printk, but bug may disappear if it's timing sensitive and data is written to a serial console</li>
+<li style="direction:ltr;">Set console log level to 0 and use dmesg instead</li>
+</ul><li style="direction:ltr;">Patch code at runtime to print or gather data</li>
+<ul><li style="direction:ltr;">Ftrace, Kprobes</li>
+</ul><li style="direction:ltr;">Patch code at runtime to stop kernel and analyze</li>
+<ul><li style="direction:ltr;">KDB, KGDB</li>
+</ul><li style="direction:ltr;">Run the kernel under the control of VM like QEMU, VirtualBox</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(3)"><font color="#000080">Setting up QEMU</font></a></p><ul><li style="direction:ltr;">Download</li>
+<ul><li style="direction:ltr;"><a href="http://download.savannah.gnu.org/releases/qemu/qemu-0.14.0.tar.gz">http://download.savannah.gnu.org/releases/qemu/qemu-0.14.0.tar.gz</a></li>
+</ul><li style="direction:ltr;">Compile &amp; Install</li>
+<ul><li style="direction:ltr;">./configure; make; make install</li>
+<li style="direction:ltr;">QEMU needs vncviewer to have graphic output when it's compiled without SDL library</li>
+</ul><li style="direction:ltr;">Run</li>
+<ul><li style="direction:ltr;">qemu-<i>Machine</i>               # run user applications directly</li>
+<li style="direction:ltr;">qemu-system-<i>Machine</i>  # run a kernel or disk image</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(4)"><font color="#000080">QEMU Parameters (1/2)</font></a></p><ul><li style="direction:ltr;">-hda <i>file</i></li>
+<li style="direction:ltr;">-kernel <i>file</i> -initrd <i>file</i> -append “<i>cmdline</i>”</li>
+<ul><li style="direction:ltr;">Boot from kernel directly, <i>cmdline</i> is passed to kernel</li>
+</ul><li style="direction:ltr;">-boot order=<i>drives</i></li>
+<ul><li style="direction:ltr;">Specify boot order</li>
+<li style="direction:ltr;">ex: order=nc, network first then hard disk</li>
+</ul><li style="direction:ltr;">-serial <i>dev</i></li>
+<ul><li style="direction:ltr;">redirect the virtual serial port to host character device</li>
+<li style="direction:ltr;">ex: -serial tcp::4444,server,nowait, not wait and listen on port 4444</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(5)"><font color="#000080">QEMU Parameters (2/2)</font></a></p><ul><li style="direction:ltr;">-m <i>megs</i></li>
+<ul><li style="direction:ltr;">Set virtual RAM size to <i>megs</i> megabytes.</li>
+</ul><li style="direction:ltr;">-nographic</li>
+<ul><li style="direction:ltr;">disable graphical output, command line only</li>
+</ul><li style="direction:ltr;">-monitor <i>dev</i></li>
+<ul><li style="direction:ltr;">Redirect the monitor. The default device is &quot;vc&quot; in graphical mode and &quot;stdio&quot; in non graphical mode.</li>
+</ul><li style="direction:ltr;">-s (= -gdb tcp::1234)</li>
+<ul><li style="direction:ltr;">Open a gdbserver on TCP port 1234.</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(6)"><font color="#000080">QEMU Usage Examples</font></a></p><ul><li style="direction:ltr;">Install Fedora PPC in QEMU</li>
+<ul><li style="direction:ltr;">qemu-system-ppc -monitor stdio -boot d -m 256 -hda ppcdisk.qcow2 -cdrom Fedora-11-ppc-DVD.iso</li>
+</ul><li style="direction:ltr;">Boot x86_64 Linux kernel directly</li>
+<ul><li style="direction:ltr;">qemu-system-x86_64 -s -kernel bzImage -initrd root.cpio.gz -nographic -append &quot;console=ttyS0&quot; -serial mon:telnet::2222,server,nowait -daemonize</li>
+<li style="direction:ltr;">QEMU monitor is multiplexed onto the serial port. It can be accessed with key sequence of Ctrl-A, C.</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(7)"><font color="#000080">Screenshot of QEMU with GDB </font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(8)"><font color="#000080">QEMU terminal commands</font></a></p><ul><li style="direction:ltr;">C-a h    print this help</li>
+<li style="direction:ltr;">C-a x    exit emulator</li>
+<li style="direction:ltr;">C-a s    save disk data back to file (if -snapshot)</li>
+<li style="direction:ltr;">C-a t    toggle console timestamps</li>
+<li style="direction:ltr;">C-a b    send break (magic sysrq)</li>
+<li style="direction:ltr;">C-a c    switch between console and monitor</li>
+<li style="direction:ltr;">C-a C-a  sends C-a</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(9)"><font color="#000080">Introduction of KGDB and KDB</font></a></p><ul><li style="direction:ltr;">Linux kernel has two different debugger front ends (kdb and kgdb) which interface to the debug core</li>
+<li style="direction:ltr;">KDB</li>
+<ul><li style="direction:ltr;">Use on a system console or serial console</li>
+<li style="direction:ltr;">Not a source level debugger, aimed at doing simple</li>
+<li style="direction:ltr;">analysis or diagnosis</li>
+<li style="direction:ltr;">Function</li>
+<ul><li style="direction:ltr;">Data: Read/write memory, registers</li>
+<li style="direction:ltr;">Linux: process lists, backtrace, dmesg.</li>
+<li style="direction:ltr;">Control: set breakpoints, single step instruction</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(10)"><font color="#000080">KGDB</font></a></p><ul><li style="direction:ltr;">source level debugger, used with GDB to debug a Linux kernel</li>
+<li style="direction:ltr;">Two machines (physical or virtual) are required for using KGDB</li>
+<ul><li style="direction:ltr;">Communicate via network or serial connection</li>
+<li style="direction:ltr;">Target machine runs the kernel to be debugged</li>
+<li style="direction:ltr;">Development machine runs a instance of GDB against vmlinux file which contains the symbols.</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(11)"><font color="#000080">KGDB Kernel Configuration (1)</font></a></p><ul><li style="direction:ltr;">CONFIG_DEBUG_INFO=y</li>
+<ul><li style="direction:ltr;">Required by GDB for source level debugging. This  adds debug symbols to kernel and modules (gcc -g)</li>
+</ul><li style="direction:ltr;">CONFIG_KALLSYMS=y</li>
+<ul><li style="direction:ltr;">Required by KDB to access symbols by name</li>
+</ul><li style="direction:ltr;">CONFIG_FRAME_POINTER=y</li>
+<ul><li style="direction:ltr;">Save frame info. in registers or stack to allows GDB to construct stack back traces more accurately</li>
+</ul><li style="direction:ltr;">CONFIG_DEBUG_RODATA=n</li>
+<ul><li style="direction:ltr;">Page tables will disallow write to kernel read-only data. If this is enabled, you cannot use software breakpoints</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(12)"><font color="#000080">KGDB Kernel Configuration (2)</font></a></p><ul><li style="direction:ltr;">CONFIG_EXPERIMENTAL=y</li>
+<li style="direction:ltr;">CONFIG_KGDB=y</li>
+<li style="direction:ltr;">CONFIG_KGDB_SERIAL_CONSOLE=y</li>
+<ul><li style="direction:ltr;">kgdboc is a KGDB I/O driver for use KGDB/KDB over serial console</li>
+</ul><li style="direction:ltr;">CONFIG_SERIAL_8250=y</li>
+<ul><li style="direction:ltr;">Driver for standard serial ports</li>
+</ul><li style="direction:ltr;">CONFIG_SERIAL_8250_CONSOLE=y</li>
+<ul><li style="direction:ltr;">Allow the use of a serial port as system console</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(13)"><font color="#000080">KDB Kernel Configuration</font></a></p><ul><li style="direction:ltr;">KGDB must first be enabled before KDB is enabled. To use KDB on a serial console, kgdboc and a serial port driver are also needed</li>
+<li style="direction:ltr;">CONFIG_KGDB_KDB=y</li>
+<ul><li style="direction:ltr;">include kdb frontend for kgdb</li>
+</ul><li style="direction:ltr;">CONFIG_KDB_KEYBOARD=y</li>
+<ul><li style="direction:ltr;">KDB can use a PS/2 type keyboard for an input device</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(14)"><font color="#000080">Kernel Parameters - kgdboc</font></a></p><ul><li style="direction:ltr;">kgdboc=[kms][[,]kbd][[,]serial_device][,baud]</li>
+<ul><li style="direction:ltr;">Designed to work with a single serial port which is used for your primary console and for kernel debugging</li>
+<li style="direction:ltr;">kms (kernel mode setting) integration to allow entering kdb on a graphic console</li>
+<li style="direction:ltr;">Can be configured in kernel boot parameters or at runtime with sysfs</li>
+<li style="direction:ltr;">does not support interrupting the target via the gdb remote protocol. You must manually send a sysrq-g</li>
+</ul><li style="direction:ltr;">Enable / Disable kgdboc</li>
+<ul><li style="direction:ltr;">echo ttyS0,115200 &gt; /sys/module/kgdboc/parameters/kgdboc</li>
+<li style="direction:ltr;">echo “” &gt; /sys/module/kgdboc/parameters/kgdboc</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(15)"><font color="#000080">Kernel Parameters - kgdbwait</font></a></p><ul><li style="direction:ltr;">It makes kernel stop as early as I/O driver supports and wait for a debugger connection during booting of a kernel</li>
+<li style="direction:ltr;">Useful for debugging kernel initialization</li>
+<li style="direction:ltr;">Note</li>
+<ul><li style="direction:ltr;">A KGDB I/O driver must be compiled into kernel and kgdbwait should always follow the parameter for KGDB I/O driver in kernel command line</li>
+</ul><li style="direction:ltr;">Example</li>
+<ul><li style="direction:ltr;">kgdboc=ttyS0,115200 kgdbwait</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(16)"><font color="#000080">Using KDB on serial port</font></a></p><ul><li style="direction:ltr;">Configure I/O driver</li>
+<ul><li style="direction:ltr;">Boot kernel with kgdboc parameters or</li>
+<li style="direction:ltr;">Configure kgdboc via sysfs</li>
+</ul><li style="direction:ltr;">Enter the kernel debugger manually by sending a sysrq-g or by waiting for an oops or fault</li>
+<ul><li style="direction:ltr;">echo g &gt; /proc/sysrq-trigger</li>
+<li style="direction:ltr;">Minicom: Ctrl-a, f, g</li>
+<li style="direction:ltr;">Telnet: Ctrl-], send break&lt;RET&gt;, g</li>
+</ul><li style="direction:ltr;">At KDB prompt, enter “help” to see a list of commands, “go” to resume kernel execution</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(17)"><font color="#000080">Some KDB commands</font></a></p>Command         Usage                Description
+----------------------------------------------------------
+md              &lt;vaddr&gt;              Display Memory Contents
+mm              &lt;vaddr&gt; &lt;contents&gt;   Modify Memory Contents
+go              [&lt;vaddr&gt;]            Continue Execution
+rd                                   Display Registers
+rm              &lt;reg&gt; &lt;contents&gt;     Modify Registers
+bt              [&lt;vaddr&gt;]            Stack traceback
+help                                 Display Help Message
+kgdb                                 Enter kgdb mode
+ps              [&lt;flags&gt;|A]          Display active task list
+pid             &lt;pidnum&gt;             Switch to another task
+lsmod                                List loaded kernel modules
+dmesg           [lines]              Display syslog buffer
+kill            &lt;-signal&gt; &lt;pid&gt;      Send a signal to a process
+summary                              Summarize the system
+bp              [&lt;vaddr&gt;]            Set/Display breakpoints
+ss                                   Single Step
+</div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(18)"><font color="#000080">Screenshot of KDB with GDB</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(19)"><font color="#000080">Using KGDB and GDB (1)</font></a></p><ul><li style="direction:ltr;">Configure kgdboc</li>
+<ul><li style="direction:ltr;">kgdb, like kdb will only hook up to the kernel trap hooks if a KGDB I/O driver is loaded and configured</li>
+</ul><li style="direction:ltr;">Stop kernel execution</li>
+<ul><li style="direction:ltr;">Send a sysrq-g, if you see a kbd prompt, enter “kgdb”</li>
+<li style="direction:ltr;">or you can use kgdbwait for debugging kernel boot.</li>
+</ul><li style="direction:ltr;">Connect from from gdb</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(20)"><font color="#000080">Using KGDB and GDB (2)</font></a></p><ul><li style="direction:ltr;">Reminder</li>
+<ul><li style="direction:ltr;">If you “continue” in gdb, and need to &quot;break in&quot; again, you need to issue another sysrq-g</li>
+<li style="direction:ltr;">You can put a breakpoint at <i>sys_sync</i> and then run &quot;sync&quot; from a shell to break into the debugger</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(21)"><font color="#000080">Screenshot of KGDB and GDB</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(22)"><font color="#000080">Mix use of KDB and KGDB</font></a></p><ul><li style="direction:ltr;">Transition from KGDB TO KDB</li>
+<ul><li style="direction:ltr;">Input $3#33 blindly or</li>
+<li style="direction:ltr;">Enter the command maintenance packet 3 in GDB</li>
+</ul><li style="direction:ltr;">Transition from KDB to KGDB</li>
+<ul><li style="direction:ltr;">At KDB prompt, enter kgdb, then disconnect your terminal program and connect GDB in its place</li>
+</ul><li style="direction:ltr;">Run KDB commands from GDB</li>
+<ul><li style="direction:ltr;">Use GDB monitor command, ex: monitor lsmod</li>
+</ul><li style="direction:ltr;">The debug core remember the last one you used and auto-start it next time you “break in”</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(23)"><font color="#000080">agent-proxy (1)</font></a></p><ul><li style="direction:ltr;">agent-proxy is a multiplexer which allows GDB and a terminal program to connect to the same serial (or TCP) port at the same time.</li>
+<li style="direction:ltr;">It will send sysrq-g for GDB</li>
+<ul><li style="direction:ltr;">When GDB initiate a connection </li>
+<li style="direction:ltr;">When GDB receives a Ctrl-C after “continue”</li>
+</ul><li style="direction:ltr;">agent-proxy saves lot of troubles</li>
+<ul><li style="direction:ltr;">You don't have to disconnect A and connect B every time you want to use B</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(24)"><font color="#000080">agent-proxy (2)</font></a></p><ul><li style="direction:ltr;">Download &amp; compile</li>
+<ul><li style="direction:ltr;">git clone git://git.kernel.org/pub/scm/utils/kernel/kgdb/agent-proxy.git</li>
+<li style="direction:ltr;">cd agent-proxy ; make</li>
+</ul><li style="direction:ltr;">Usage example</li>
+<ul><li style="direction:ltr;">agent-proxy 4440^4441 0 /dev/ttyS0,115200</li>
+<li style="direction:ltr;">agent-proxy 4440^4441 10.0.0.10 2011</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(25)"><font color="#000080">References</font></a></p><ul><li style="direction:ltr;">KDB and KGDB kernel documentation</li>
+<ul><li style="direction:ltr;"><a href="http://kernel.org/pub/linux/kernel/people/jwessel/kdb/">http://kernel.org/pub/linux/kernel/people/jwessel/kdb/</a></li>
+</ul><li style="direction:ltr;">Kernel Debugging Webinar</li>
+<ul><li style="direction:ltr;"><a href="http://kernel.org/pub/linux/kernel/people/jwessel/dbg_webinar/">http://kernel.org/pub/linux/kernel/people/jwessel/dbg_webinar/</a></li>
+</ul><li style="direction:ltr;">QEMU man pages</li>
+<ul><li style="direction:ltr;"><a href="http://qemu.org/">http://qemu.org</a></li>
+</ul></ul></div>
+</body>
+</html>

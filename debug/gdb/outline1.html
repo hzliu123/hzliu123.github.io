@@ -1,0 +1,648 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+     "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+  <meta HTTP-EQUIV=CONTENT-TYPE CONTENT="text/html; charset=utf-8">
+  <title>Slide 1</title>
+</head>
+<body text="#000000" bgcolor="#F7F9FC" link="#000080" vlink="#0000CC" alink="#000080">
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(0)">Slide 1</a></p><font color="#280099">GDB Tutorial</font>
+<font color="#280099"></font>
+<font color="#280099">Hao-Ran Liu</font>
+</div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(1)"><font color="#280099">Summary of GDB</font></a></p><ul><li style="direction:ltr;">Start your program, specifying anything that might affect its behavior. </li>
+<li style="direction:ltr;">Make your program stop on specified conditions</li>
+<li style="direction:ltr;">Examine what has happened, when your program has stopped. </li>
+<li style="direction:ltr;">Change things in your program, so you can experiment with correcting the effects of bugs</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(2)"><font color="#280099">gcc to provide debug info</font></a></p><ul><li style="direction:ltr;">Compile your program with gcc -g option. </li>
+<ul><li style="direction:ltr;">gdb uses debug info to map address in the executable code back to line numbers in source codes</li>
+</ul><li style="direction:ltr;">Debug optimized code compiled with gcc -g -O</li>
+<ul><li style="direction:ltr;">but it is easier to follow the progress of your program if code can be recompiled without optimization</li>
+<li style="direction:ltr;">Breakpoints on inlined functions is not allowed. Put breakpoints on the first line of the inlined functions instead. </li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(3)"><font color="#280099">Invoking GDB</font></a></p><ul><li style="direction:ltr;">Start</li>
+<ul><li style="direction:ltr;">gdb <i>program</i> <i>pid</i></li>
+<li style="direction:ltr;">gdb --args gcc -O2 -c foo.c</li>
+</ul><li style="direction:ltr;">Exit</li>
+<ul><li style="direction:ltr;">quit or Ctrl-d to exit</li>
+<li style="direction:ltr;">Ctrl-c to interrupt any GDB command</li>
+</ul><li style="direction:ltr;">Run external programs without leaving GDB</li>
+<ul><li style="direction:ltr;">shell <i>command_string</i></li>
+<li style="direction:ltr;">make <i>make_args</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(4)"><font color="#280099">Getting help</font></a></p><ul><li style="direction:ltr;">help (h)</li>
+<ul><li style="direction:ltr;">List of commands, getting description of command </li>
+</ul><li style="direction:ltr;">info</li>
+<ul><li style="direction:ltr;">describing the state of your program</li>
+<li style="direction:ltr;">ex. info args, info registers, info breakpoints</li>
+</ul><li style="direction:ltr;">show (set)</li>
+<ul><li style="direction:ltr;">describing the state of gdb itself</li>
+<li style="direction:ltr;">Most of the things you can show can be changed by set</li>
+<li style="direction:ltr;">ex. show radix, set radix</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(5)"><font color="#280099">Running GDB</font></a></p><ul><li style="direction:ltr;">Program parameters</li>
+<ul><li style="direction:ltr;">set args <i>arg_list</i></li>
+<li style="direction:ltr;">set env <i>varname [=value]</i> </li>
+<ul><li style="direction:ltr;">path <i>directory</i></li>
+</ul><li style="direction:ltr;">cd <i>directory</i></li>
+<li style="direction:ltr;">tty <i>/dev/pts/2</i></li>
+</ul><li style="direction:ltr;">run (r) <i>arg_list [&gt; output file]</i></li>
+<ul><li style="direction:ltr;">start your program under gdb. </li>
+</ul><li style="direction:ltr;">start</li>
+<ul><li style="direction:ltr;">Set a temporarily breakpoint at main function and run</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(6)"><font color="#280099">Running GDB</font></a></p><ul><li style="direction:ltr;">attach <i>pid</i></li>
+<ul><li style="direction:ltr;">Attach to and stop a running process for debugging</li>
+</ul><li style="direction:ltr;">detach</li>
+<ul><li style="direction:ltr;">Detaching the process continues its execution and releases it from gdb control</li>
+</ul><li style="direction:ltr;">kill</li>
+<ul><li style="direction:ltr;">Kill the child process in which your program is running under gdb</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(7)"><font color="#280099">Debugging multiple programs</font></a></p><ul><li style="direction:ltr;">Inferior: the state of each program execution, typically corresponds to a process.</li>
+<li style="direction:ltr;">info inferiors</li>
+<li style="direction:ltr;">inferior <i>infno</i></li>
+<ul><li style="direction:ltr;">Make inferior number <i>infno</i> the current inferior</li>
+</ul><li style="direction:ltr;">add-inferior [ -copies <i>n</i> ] [ -exec <i>executable</i> ]</li>
+<li style="direction:ltr;">clone-inferior [ -copies <i>n</i> ] [ <i>infno</i> ]</li>
+<li style="direction:ltr;">detach inferior <i>infno</i></li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(8)"><font color="#280099">Debugging multiple threads</font></a></p><ul><li style="direction:ltr;">GDB print messages when gdb detects that threads have started and exited</li>
+<li style="direction:ltr;">info threads</li>
+<li style="direction:ltr;">thread <i>threadno</i></li>
+<li style="direction:ltr;">thread apply [<i>threadno</i> | all] <i>command</i></li>
+<ul><li style="direction:ltr;">apply <i>command</i> to one or more threads</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(9)"><font color="#280099">Debugging multiple threads</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(10)"><font color="#280099">Debugging forks</font></a></p><ul><li style="direction:ltr;">By default, when a program forks, gdb will continue to debug the parent process and the child process will run unimpeded</li>
+<li style="direction:ltr;">set follow-fork-mode <i>mode</i></li>
+<ul><li style="direction:ltr;">parent or child to debug after a fork</li>
+</ul><li style="direction:ltr;">set detach-on-fork <i>mode</i></li>
+<ul><li style="direction:ltr;">on: detach one of the processes (depending on the value of follow-fork-mode) after a fork and allow it to run independently</li>
+<li style="direction:ltr;">off: retain debugger control over them both</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(11)"><font color="#280099">Debugging forks</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(12)"><font color="#280099">Checkpoint</font></a></p><ul><li style="direction:ltr;">checkpoint</li>
+<ul><li style="direction:ltr;">Save a snapshot of the debugged program's current execution state.</li>
+</ul><li style="direction:ltr;">info checkpoints</li>
+<li style="direction:ltr;">restart <i>checkpoint-id</i></li>
+<ul><li style="direction:ltr;">Restore the program state (registers, memory, some OS state) that was saved at <i>checkpoint-id</i>. </li>
+</ul><li style="direction:ltr;">delete checkpoint <i>checkpoint-id</i></li>
+<li style="direction:ltr;">While stepping through a program, you can go back to a previous saved checkpoint and start again from there if you go too far.</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(13)"><font color="#280099">Breakpoint</font></a></p><ul><li style="direction:ltr;">break [<i>location</i>] [thread <i>no</i>] [if <i>condition</i>]</li>
+<ul><li style="direction:ltr;">Set a breakpoint to stop your program before any code at location is executed. It's not effective when condition is evaluated as false</li>
+<li style="direction:ltr;"><i>Location: linenum, function, label, *address</i></li>
+</ul><li style="direction:ltr;">tbreak</li>
+<ul><li style="direction:ltr;">Set a breakpoint enabled only for one stop</li>
+</ul><li style="direction:ltr;">hbreak </li>
+<ul><li style="direction:ltr;">Set a hardware-assisted breakpoint</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(14)"><font color="#280099">Breakpoint</font></a></p><ul><li style="direction:ltr;">info breakpoints [<i>n...</i>]</li>
+<ul><li style="direction:ltr;">Print a table of all breakpoints, watchpoints, and catchpoints set and not deleted</li>
+<li style="direction:ltr;">displays a count of the number of times the breakpoint has been hit, useful for use with ignore command</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(15)"><font color="#280099">Breakpoint</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(16)"><font color="#280099">Watchpoint: data breakpoint</font></a></p><ul><li style="direction:ltr;">watch <i>expr</i> [thread <i>no</i>]</li>
+<ul><li style="direction:ltr;">Set a watchpoint for an expression. It stops your program when the value of <i>expr</i> changes</li>
+</ul><li style="direction:ltr;">rwatch <i>expr</i></li>
+<ul><li style="direction:ltr;">Stop when the value of <i>expr</i> is read</li>
+</ul><li style="direction:ltr;">awatch <i>expr</i></li>
+<ul><li style="direction:ltr;">Stop when <i>expr</i> is read 
+or written </li>
+</ul><li style="direction:ltr;">info watchpoints <i>[n...]</i></li>
+<ul><li style="direction:ltr;">prints a list of watchpoints</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(17)"><font color="#280099">Catchpoint</font></a></p><ul><li style="direction:ltr;">Stop for certain kinds of program events, such as C++ exceptions or OS system calls</li>
+<li style="direction:ltr;">catch <i>event, </i>tcatch<i> event</i></li>
+<ul><li style="direction:ltr;"><i>event: </i>syscall, fork, exec, catch, throw</li>
+</ul><li style="direction:ltr;">Use the info break command to list the current catchpoints </li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(18)"><font color="#280099">Deleting breakpoints</font></a></p><ul><li style="direction:ltr;">clear</li>
+<ul><li style="direction:ltr;">clears all breakpoints in the line that the selected frame is executing in</li>
+</ul><li style="direction:ltr;">clear <i>location</i></li>
+<ul><li style="direction:ltr;">Clear breakpoint at specified line, function, or *address</li>
+</ul><li style="direction:ltr;">delete(d) [<i>range</i>...]</li>
+<ul><li style="direction:ltr;">Delete the breakpoints, watchpoints, or catchpoints of the breakpoint ranges specified as arguments</li>
+<li style="direction:ltr;">If no argument is specified, delete all breakpoints</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(19)"><font color="#280099">Disabling Breakpoints</font></a></p><ul><li style="direction:ltr;">A breakpoint, watchpoint, or catchpoint can have any of four different states</li>
+<ul><li style="direction:ltr;">Enabled, disabled, enabled once, enabled for deletion</li>
+</ul><li style="direction:ltr;">disable(dis) [<i>range...</i>]</li>
+<ul><li style="direction:ltr;">If <i>range</i> is not given, disable all breakpoints</li>
+</ul><li style="direction:ltr;">enable [<i>range...</i>]</li>
+<li style="direction:ltr;">enable [once | delete] <i>range...</i></li>
+<ul><li style="direction:ltr;">once: Enable breakpoints and disable after hit</li>
+<li style="direction:ltr;">delete: Enable breakpoints and delete when hit (=tbreak) </li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(20)"><font color="#280099">Break conditions</font></a></p><ul><li style="direction:ltr;">Break condition can be specified by using if after break command, or be changed at any time with the condition command</li>
+<li style="direction:ltr;">watchpoints breaks only if value is interested</li>
+<ul><li style="direction:ltr;">watch count if count &gt; 10</li>
+</ul><li style="direction:ltr;">condition <i>bnum</i> <i>expr</i></li>
+<ul><li style="direction:ltr;">If <i>expr</i> is not specified, condition at <i>bnum</i> is removed</li>
+</ul><li style="direction:ltr;">ignore <i>bnum count</i></li>
+<ul><li style="direction:ltr;">The next <i>count</i> times the breakpoint is reached, your program's execution does not stop</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(21)"><font color="#280099">Break conditions</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(22)"><font color="#280099">Breakpoint Command Lists</font></a></p><ul><li style="direction:ltr;">commands [<i>range...</i>]
+<i>... command-list ...</i>
+end</li>
+<ul><li style="direction:ltr;">Set commands to be executed when a breakpoint is hit</li>
+<li style="direction:ltr;">With no argument, the targeted breakpoint is the last one set</li>
+<li style="direction:ltr;">Use continue, next, step to resume execution. Note that any other commands after a command that resumes execution are ignored.</li>
+<li style="direction:ltr;">If the first command in a command list is silent, the message about stopping at a breakpoint is not printed</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(23)"><font color="#280099">Breakpoint Command Lists</font></a></p><ul><li style="direction:ltr;">Print some information when breakpoint is hit</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(24)"><font color="#280099">Breakpoint Command Lists</font></a></p><ul><li style="direction:ltr;">One application for breakpoint commands is to compensate for one bug so you can test for another</li>
+<li style="direction:ltr;">For example, you want to correct line 50:</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(25)"><font color="#280099">Save breakpoints</font></a></p><ul><li style="direction:ltr;">save breakpoints [<i>filename</i>]</li>
+<ul><li style="direction:ltr;">Save current breakpoint definitions as a script</li>
+<li style="direction:ltr;">Use the source command in another debug session to restore them</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(26)"><font color="#280099">Continuing and Stepping</font></a></p><ul><li style="direction:ltr;">continue(c) [<i>ignore-count</i>]</li>
+<ul><li style="direction:ltr;">Resume program execution, at the address where your program last stopped</li>
+<li style="direction:ltr;"><i>ignore-count</i> allows you to specify a further number of times to ignore a breakpoint at this location; its effect is like that of ignore</li>
+</ul><li style="direction:ltr;">step(s) [<i>n</i>]</li>
+<ul><li style="direction:ltr;">Step program until it reaches a different source line.</li>
+<li style="direction:ltr;">only enters a function if it has line number information </li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(27)"><font color="#280099">Continuing and Stepping</font></a></p><ul><li style="direction:ltr;">next(n) [<i>count</i>]</li>
+<ul><li style="direction:ltr;">This is similar to step, but function calls that appear within the line of code are executed without stopping</li>
+</ul><li style="direction:ltr;">set step-mode [on]</li>
+<ul><li style="direction:ltr;">causes the step command to stop at the first instruction of a function which contains no debug line information</li>
+<li style="direction:ltr;">Default: off</li>
+</ul><li style="direction:ltr;">finish(fin)</li>
+<ul><li style="direction:ltr;">Execute until selected stack frame returns and print the returned value</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(28)"><font color="#280099">Continuing and Stepping</font></a></p><ul><li style="direction:ltr;">until(u) [<i>location</i>]</li>
+<ul><li style="direction:ltr;">Execute until reaching a source line greater than the current or a specified <i>location</i> <font color="#0000FF">within the current frame</font>;  always stops when the current stack frame returns.</li>
+<li style="direction:ltr;">This command is useful to avoid single stepping through a loop more than once</li>
+</ul><li style="direction:ltr;">stepi(si) [<i>count</i>]</li>
+<ul><li style="direction:ltr;">Execute one machine instruction, then stop and return to the debugger</li>
+</ul><li style="direction:ltr;">nexti(ni) [<i>count</i>]</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(29)"><font color="#280099">Continuing and Stepping</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(30)"><font color="#280099">Signals</font></a></p><ul><li style="direction:ltr;">info signals(info handle)</li>
+<ul><li style="direction:ltr;">Print a table of all the kinds of signals and how gdb has been told to handle each one</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(31)"><font color="#280099">Signals</font></a></p><ul><li style="direction:ltr;">handle <i>signal</i> [<i>keywords...</i>]</li>
+<ul><li style="direction:ltr;"><i>signal</i>: ex. SIGHUP, 1-15, all</li>
+<li style="direction:ltr;"><i>keywords</i>: </li>
+<ul><li style="direction:ltr;">stop, nostop: stop your program when this signal happens?</li>
+<li style="direction:ltr;">print, noprint: print a message when this signal happens?</li>
+<li style="direction:ltr;">pass, nopass: allow your program to see this signal?</li>
+</ul></ul><li style="direction:ltr;">The default is set to nostop, noprint, pass for non-erroneous signals such as SIGALRM,  SIGCHLD, and to stop, print, pass for the erroneous signals. </li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(32)"><font color="#280099">Signals</font></a></p><ul><li style="direction:ltr;">When a signal stops your program, the signal is not visible to the program until you continue</li>
+<ul><li style="direction:ltr;">Use signal 0 to continue if you don't want your program to see that signal</li>
+<li style="direction:ltr;">$_siginfo contains the information of intercepted signal</li>
+</ul><li style="direction:ltr;">signal <i>signal</i></li>
+<ul><li style="direction:ltr;">Continue program giving it the <i>signal</i> specified</li>
+<li style="direction:ltr;">Signal is passed directly to your program ignoring gdb signal handling table</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(33)"><font color="#280099">Signals</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(34)"><font color="#280099">Signals</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(35)"><font color="#280099">Multi-thread execution control:
+All-stop mode</font></a></p><ul><li style="direction:ltr;">When any thread stops (hit a breakpoint, single stepping, etc), all other threads are also stopped</li>
+<li style="direction:ltr;">When you restart the program, all threads start executing (even when single-stepping)</li>
+<ul><li style="direction:ltr;">This behavior can be modified by: 
+set scheduler-locking <i>mode</i></li>
+<ul><li style="direction:ltr;">Off: other threads may preempt at any time</li>
+<li style="direction:ltr;">On: no thread except the current thread may run</li>
+<li style="direction:ltr;">Step: 'On' mode during step operation; 'Off' mode otherwise.</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(36)"><font color="#280099">Multi-thread execution control:
+Non-stop mode</font></a></p><ul><li style="direction:ltr;">Other threads can continue to run freely while you examine the stopped thread in the debugger</li>
+<li style="direction:ltr;">In non-stop mode, all execution control commands apply only to the current thread by default</li>
+<ul><li style="direction:ltr;">To continue/stop all threads, use c -a and 
+interrupt -a</li>
+</ul><li style="direction:ltr;">To enter non-stop mode:</li>
+<ul><li style="direction:ltr;">set target-async 1</li>
+<li style="direction:ltr;">set pagination off</li>
+<li style="direction:ltr;">set non-stop on</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(37)"><font color="#280099">Multi-thread execution control:
+Non-stop mode</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(38)"><font color="#280099">Background Execution</font></a></p><ul><li style="direction:ltr;">In background execution, gdb immediately gives a command prompt so that you can issue other commands while your program runs. </li>
+<li style="direction:ltr;">asynchronous mode must be enabled before you can use background execution commands.</li>
+<ul><li style="direction:ltr;">set target-async on</li>
+</ul><li style="direction:ltr;">To specify background execution, add a &amp; to the command; the execution commands that accept background execution are: </li>
+<ul><li style="direction:ltr;">run, attach, step, stepi, next, nexti, continue, finish, until</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(39)"><font color="#280099">Examining the stack</font></a></p><ul><li style="direction:ltr;">A Stack frame includes the location of the call, the arguments of the call, and the local variables of the function being called</li>
+<li style="direction:ltr;">frame(f) [<i>n/addr</i>]</li>
+<ul><li style="direction:ltr;">Select frame number <i>n </i>or frame at address <i>addr</i>, and print the stack frame. Specifying <i>addr</i> is useful if the chaining of stack frames has been damaged</li>
+</ul><li style="direction:ltr;">up / down <i>n</i></li>
+<ul><li style="direction:ltr;">Move <i>n</i> frames up / down the stack</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(40)"><font color="#280099">Examining the stack</font></a></p><ul><li style="direction:ltr;">backtrace(bt) [full] [<i>n</i>]</li>
+<ul><li style="direction:ltr;">Print a backtrace of the entire stack; full print the values of the local variables also</li>
+<li style="direction:ltr;">To display backtrace of all threads:
+thread apply all bt</li>
+</ul><li style="direction:ltr;">info frame<i> </i>[a<i>ddr</i>]</li>
+<ul><li style="direction:ltr;">prints a verbose description of the selected stack frame or frame at <i>addr</i> if <i>addr</i> is specified</li>
+</ul><li style="direction:ltr;">info args</li>
+<li style="direction:ltr;">info locals</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(41)"><font color="#280099">Examining the stack</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(42)"><font color="#280099">Printing source lines </font></a></p><ul><li style="direction:ltr;">list(l) [<i>linespec</i> | <i>first, last | first, | ,last</i>]</li>
+<ul><li style="direction:ltr;">Repeating a list command with &lt;RET&gt; discards the argument, so it is equivalent to typing just list</li>
+<li style="direction:ltr;"><i>first</i> and <i>last</i> are also in <i>linespec</i> format</li>
+</ul><li style="direction:ltr;"><i>linespec</i> can be</li>
+<ul><li style="direction:ltr;">[<i>filename:</i>]<i>linenum | </i>[<i>filename:</i>]<i>function | </i>[<i>function:</i>]<i>label | -</i></li>
+<li style="direction:ltr;"><i>-|+offset</i>: the line <i>offset</i> lines before/after the current line</li>
+<li style="direction:ltr;"><i>*address</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(43)"><font color="#280099">Searching source lines </font></a></p><ul><li style="direction:ltr;">search <i>regexp</i></li>
+<ul><li style="direction:ltr;">checks each line, starting with the one following the last line listed, for a match for <i>regexp</i></li>
+</ul><li style="direction:ltr;">reverse-search(rev) <i>regexp</i></li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(44)"><font color="#280099">Specifying Source Directories</font></a></p><ul><li style="direction:ltr;">if gdb cannot finds a source file at its original location (may be moved), it looks for the file in “source path“</li>
+<li style="direction:ltr;">Example</li>
+<ul><li style="direction:ltr;">An executable references the file /usr/src/foo-1.0/lib/foo.c, and our “source path<i>”</i> is /mnt/cross; gdb tries these locations in listed order</li>
+<ul><li style="direction:ltr;">/usr/src/foo-1.0/lib/foo.c</li>
+<li style="direction:ltr;">/mnt/cross/usr/src/foo-1.0/lib/foo.c</li>
+<li style="direction:ltr;">/mnt/cross/foo.c</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(45)"><font color="#280099">Specifying Source Directories</font></a></p><ul><li style="direction:ltr;">directory(dir) <i>dirname</i> ...</li>
+<ul><li style="direction:ltr;">Add directory dirname to the front of the source path</li>
+</ul><li style="direction:ltr;">directory</li>
+<ul><li style="direction:ltr;">Reset the source path to its default value ($cdir:$cwd)</li>
+</ul><li style="direction:ltr;">show directories</li>
+<ul><li style="direction:ltr;">Print the source path</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(46)"><font color="#280099">Specifying Source Directories</font></a></p><ul><li style="direction:ltr;">Substitution rules </li>
+<ul><li style="direction:ltr;">specify how to rewrite source directories stored in the program's debug information</li>
+<li style="direction:ltr;">are evaluated one by one in the order they are defined. The first one matching is used for substitution</li>
+<li style="direction:ltr;">can be more efficient than using dir command</li>
+</ul><li style="direction:ltr;">set substitute-path <i>from to</i></li>
+<li style="direction:ltr;">unset substitute-path [<i>path</i>]</li>
+<li style="direction:ltr;">show substitute-path [<i>path</i>]</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(47)"><font color="#280099">Specifying Source Directories</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(48)"><font color="#280099">Source and Machine Code</font></a></p><ul><li style="direction:ltr;">info line <i>linespec</i></li>
+<ul><li style="direction:ltr;">map source lines to program addresses</li>
+<li style="direction:ltr;">This sets the default address for &quot;x&quot; to the line's first instruction so that &quot;x/i&quot; suffices to start examining the machine code</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(49)"><font color="#280099">Source and Machine Code</font></a></p><ul><li style="direction:ltr;">disassemble [/r | /m | /rm] [<i>start,end/+length</i>]</li>
+<ul><li style="direction:ltr;">dumps a range of memory as machine instructions</li>
+<li style="direction:ltr;">/m: source lines are included</li>
+<li style="direction:ltr;">/r: raw instructions in hex are included</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(50)"><font color="#280099">Examining Data</font></a></p><ul><li style="direction:ltr;">print [<i>/fmt</i>] <i>expr</i></li>
+<ul><li style="direction:ltr;">evaluates <i>expr</i> and prints the value. <i>expr</i> may include calls to functions in the program being debugged</li>
+<li style="direction:ltr;"><i>/fmt</i>: print format</li>
+<ul><li style="direction:ltr;">x: hexadecimal                   d: signed decimal 
+u: unsigned decimal           o: octal
+f: floating point</li>
+<li style="direction:ltr;">a: hex address (with symbol information, similar to i symbol)</li>
+<li style="direction:ltr;">c: char integer (with character representation)</li>
+<li style="direction:ltr;">s: string</li>
+<li style="direction:ltr;">r: raw format, bypasses any pretty printer</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(51)"><font color="#280099">Expressions</font></a></p><ul><li style="direction:ltr;">print and many other gdb commands accept an expression and compute its value.</li>
+<ul><li style="direction:ltr;">Any valid expression in C (or other language) is valid in gdb. This includes conditional expressions, function calls, casts, and string constants</li>
+<li style="direction:ltr;">gdb supports array constants in expressions input by the user</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(52)"><font color="#280099">Program Variables</font></a></p><ul><li style="direction:ltr;">Program variables in an expression must be either global (or file-static) or in the scope of the selected frame</li>
+<li style="direction:ltr;">Accessing variables out of scope is possible if you specify file or function name</li>
+<ul><li style="direction:ltr;"><i>'file'::variable</i></li>
+<li style="direction:ltr;"><i>function::variable</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(53)"><font color="#280099">Program Variables</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(54)"><font color="#280099">Artificial Arrays</font></a></p><ul><li style="direction:ltr;">It is often useful to print out several successive objects of the same type in memory</li>
+<ul><li style="direction:ltr;">GDB allows referring to a contiguous span of memory as an artificial array by using operator @ </li>
+</ul><li style="direction:ltr;">Sometimes, the elements of interest may not be adjacent. For example, to print out only an interested field in a structure.</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(55)"><font color="#280099">Examining Memory</font></a></p><ul><li style="direction:ltr;">x[/<i>nfu</i>] [<i>addr</i>]</li>
+<ul><li style="direction:ltr;"><i>n</i>, the repeat count, default 1</li>
+<li style="direction:ltr;"><i>f</i>, the display format is one of the formats used by print, and in addition 'i' (for machine instructions)</li>
+<li style="direction:ltr;"><i>u</i>, the unit size is any of b Bytes (1), h Halfwords (2), w Words (4), g Giant words (8)</li>
+</ul><li style="direction:ltr;">compare-sections [<i>section-name</i>]</li>
+<ul><li style="direction:ltr;">Compare the data of a <i>section-name</i> in the executable file being debugged with the same section in the remote machine's memory, and report any mismatches</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(56)"><font color="#280099">Examining Memory</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(57)"><font color="#280099">Automatic Display</font></a></p><ul><li style="direction:ltr;">display[/<i>fmt</i>] [<i>expr</i> | <i>addr</i>]</li>
+<ul><li style="direction:ltr;">Print value (of a <i>expr</i> / <i>at addr</i>) when<i> </i>program stops</li>
+<li style="direction:ltr;">Actually it use print or x, depending on the <i>fmt</i></li>
+<ul><li style="direction:ltr;">If <i>fmt</i> specifies only a display format and not a size or count, print is used (the second argument should be a <i>expr</i>)</li>
+<li style="direction:ltr;">If <i>fmt</i> includes 'i' or 's', or a unit-size or a number of units, x is used (the second argument should be a <i>addr</i>)</li>
+</ul></ul><li style="direction:ltr;">undisplay <i>dnums...</i></li>
+<ul><li style="direction:ltr;">Cancel some expressions to be displayed</li>
+</ul><li style="direction:ltr;">info display</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(58)"><font color="#280099">Automatic Display</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(59)"><font color="#280099">Value History</font></a></p><ul><li style="direction:ltr;">Values printed by the print command are saved in the gdb value history</li>
+<ul><li style="direction:ltr;">$: previous value      $$: the value before previous one</li>
+<li style="direction:ltr;">$$n: nth value from the end ($$0 = $, $$1 = $$)</li>
+<li style="direction:ltr;">Value history is discarded when symbol table changes</li>
+</ul><li style="direction:ltr;">show values [<i>n</i> | +]</li>
+<ul><li style="direction:ltr;">Print the last 10 values or 10 values around <i>n</i>th in the value history</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(60)"><font color="#280099">Convenience Variables</font></a></p><ul><li style="direction:ltr;">A conv. var. is prefixed with `$'; It has no fixed type and is created when used for the first time</li>
+<ul><li style="direction:ltr;">show convenience(show conv)</li>
+<ul><li style="direction:ltr;">Print a list of conv. var. used so far, and their values</li>
+</ul><li style="direction:ltr;">init-if-undefined <i>$variable = expression</i></li>
+<ul><li style="direction:ltr;">Set a conv. var. if it has not already been set</li>
+<li style="direction:ltr;">Useful for user-defined commands</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(61)"><font color="#280099">Convenience Variables</font></a></p><ul><li style="direction:ltr;">Conv. var. created by gdb</li>
+<ul><li style="direction:ltr;">$_: provide a default address for next x command to examine. Set by x, info line and info breakpoints </li>
+<li style="direction:ltr;">$__: set to the value of the last addr. which x examined</li>
+<li style="direction:ltr;">$_exitcode: the exit code of program terminated</li>
+<li style="direction:ltr;">$_siginfo: contains extra signal information</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(62)"><font color="#280099">Registers</font></a></p><ul><li style="direction:ltr;">Registers</li>
+<ul><li style="direction:ltr;">are accessed as variables with names starting with `$'</li>
+<li style="direction:ltr;">available on most machines have standard name</li>
+<ul><li style="direction:ltr;">$pc: program counter, $sp: stack pointer, $fp: stack frame pointer, $ps: processor status</li>
+</ul></ul><li style="direction:ltr;">info registers</li>
+<ul><li style="direction:ltr;">List of integer registers and their contents, <font color="#0000FF">for selected stack frame</font></li>
+</ul><li style="direction:ltr;">info float</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(63)"><font color="#280099">Memory Region Attributes</font></a></p><ul><li style="direction:ltr;">mem <i>lo_addr</i> <i>hi_addr</i> <i>[mode</i>] [<i>width</i>] [<i>cache</i>]</li>
+<ul><li style="direction:ltr;">Describe special handling required by regions of your target's memory</li>
+<li style="direction:ltr;"><i>mode</i>: ro, wo, rw <i>width</i>: 8, 16, 32, 64 <i>cache</i>: cache, nocache</li>
+</ul><li style="direction:ltr;">mem auto</li>
+<ul><li style="direction:ltr;">Discard any user changes to the memory regions and use target-supplied regions</li>
+</ul><li style="direction:ltr;">set mem inaccessible-by-default [on|off]</li>
+<ul><li style="direction:ltr;">If on is specified and there's at least one memory range defined, gdb refuse accesses to memory that is not explicitly described. The default value is on.</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(64)"><font color="#280099">Copy Between Memory and a File</font></a></p><ul><li style="direction:ltr;">dump [<i>format</i>] memory <i>filename</i> <i>s_addr e_addr</i></li>
+<li style="direction:ltr;">dump [<i>format</i>] value <i>filename</i> <i>expr</i></li>
+<ul><li style="direction:ltr;">Dump memory from <i>s_addr</i> to <i>e_addr</i>, or the value of <i>expr</i>, to <i>filename</i></li>
+<li style="direction:ltr;"><i>format</i>: binary, ihex, srec, tekhex</li>
+</ul><li style="direction:ltr;">append [binary] memory <i>filename</i> <i>s_addr</i> <i>e_addr</i></li>
+<li style="direction:ltr;">append [binary] value <i>filename</i> <i>expr</i></li>
+<li style="direction:ltr;">restore <i>filename</i> [binary] <i>bias</i> <i>file_start</i> <i>file_end</i></li>
+<ul><li style="direction:ltr;">Restore the contents of file filename into memory</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(65)"><font color="#280099">Copy Between Memory and a File</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(66)"><font color="#280099">Core File Generation</font></a></p><ul><li style="direction:ltr;">To preserve a snapshot of program's state</li>
+<li style="direction:ltr;">gcore [<i>file</i>]</li>
+<ul><li style="direction:ltr;">Produce a core dump of the inferior process</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(67)"><font color="#280099">Search Memory</font></a></p><ul><li style="direction:ltr;">find [/<i>sn</i>] <i>s_addr</i>, +<i>len</i> | <i>e_addr</i>, <i>val1</i> [, <i>val2</i>, ...]</li>
+<ul><li style="direction:ltr;">Search memory from <i>s_addr</i> to s<i>_addr+len</i> or to e<i>_addr</i> for the sequence of bytes specified by <i>val1</i>, <i>val2</i>, etc</li>
+<li style="direction:ltr;"><i>s</i>: size of each search v: b, h, w, g; if not specified, it is taken from the the value's type in the current language</li>
+<ul><li style="direction:ltr;">ex: a search for an untyped 0x42 will search for &quot;(int) 0x42&quot; which is typically four bytes</li>
+</ul><li style="direction:ltr;"><i>n</i>: maximum number of matches to print</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(68)"><font color="#280099">Search Memory</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(69)"><font color="#280099">Examining the Symbol Table</font></a></p><ul><li style="direction:ltr;">info address <i>symbol</i></li>
+<ul><li style="direction:ltr;">Describe where the data for <i>symbol</i> is stored</li>
+</ul><li style="direction:ltr;">info symbol <i>addr</i></li>
+<ul><li style="direction:ltr;">Print the name of a symbol which is stored at the address <i>addr</i></li>
+</ul><li style="direction:ltr;">whatis [<i>arg</i>]</li>
+<ul><li style="direction:ltr;">Print the data type of <i>arg</i></li>
+</ul><li style="direction:ltr;">ptype [<i>arg</i>]</li>
+<ul><li style="direction:ltr;">Print the type definition of <i>arg</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(70)"><font color="#280099">Examining the Symbol Table</font></a></p><ul><li style="direction:ltr;">info types <i>regexp</i></li>
+<ul><li style="direction:ltr;">Print a brief description of all types whose names match the regular expression <i>regexp</i>. Ex: i type ^value$</li>
+</ul><li style="direction:ltr;">info scope <i>location</i></li>
+<ul><li style="direction:ltr;">List all the variables local to a particular scope</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(71)"><font color="#280099">Examining the Symbol Table</font></a></p><ul><li style="direction:ltr;">info source</li>
+<ul><li style="direction:ltr;">Information about the current source file</li>
+</ul><li style="direction:ltr;">info functions [<i>regexp</i>]</li>
+<ul><li style="direction:ltr;">Print all function names, or those matching <i>regexp</i></li>
+</ul><li style="direction:ltr;">info variables [<i>regexp</i>]</li>
+<ul><li style="direction:ltr;">Print all global and static variable names, or those matching <i>regexp</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(72)"><font color="#280099">Altering Execution</font></a></p><ul><li style="direction:ltr;">Error correction and parameter tuning can be done and tested in gdb without recompiling source codes.  </li>
+<li style="direction:ltr;">Assignment to variables</li>
+<ul><li style="direction:ltr;">Use p <i>varname=expr</i> or set var <i>varname=expr</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(73)"><font color="#280099">Continuing at a Different Address</font></a></p><ul><li style="direction:ltr;">jump <i>linespec</i></li>
+<ul><li style="direction:ltr;">resumes execution at <i>linespec</i></li>
+<li style="direction:ltr;">only changes $pc; so if <i>linespec </i>is in a differen function from the one currently executing, the results may be bizarre.</li>
+<li style="direction:ltr;">is often used in conjunction with tbreak</li>
+</ul><li style="direction:ltr;">set $pc = <i>addr</i></li>
+<ul><li style="direction:ltr;">changes the address of where your program will run when you continue (or step)</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(74)"><font color="#280099">Returning from a Function</font></a></p><ul><li style="direction:ltr;">return [<i>expr</i>]</li>
+<ul><li style="direction:ltr;">discards the selected stack frame (and all frames within it). It does not resume execution; it leaves the program stopped in the state that would exist if the function had just returned</li>
+<li style="direction:ltr;">Specifying a wrong type to return may set the value in different inferior registers than the caller code expects</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(75)"><font color="#280099">Commands to Specify Files</font></a></p><ul><li style="direction:ltr;">file [<i>file</i>]</li>
+<ul><li style="direction:ltr;">Use <i>file</i> for both symbols and executable; with no arg, discard both</li>
+</ul><li style="direction:ltr;">core-file(core) [<i>file</i>]</li>
+<ul><li style="direction:ltr;">Read <i>file</i> as core dump; or discard</li>
+</ul><li style="direction:ltr;">exec-file [<i>file</i>]</li>
+<ul><li style="direction:ltr;">Use <i>file</i> as executable only; or discard</li>
+</ul><li style="direction:ltr;">symbol-file [<i>file</i>]</li>
+<ul><li style="direction:ltr;">Use symbol table from <i>file</i>; or discard</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(76)"><font color="#280099">Commands to Specify Files</font></a></p><ul><li style="direction:ltr;">add-symbol-file <i>file</i> <i>addr</i> [-s <i>section</i> <i>saddr</i> ...]</li>
+<ul><li style="direction:ltr;">Read additional symbols from <i>file</i>, dynamically loaded at <i>addr</i></li>
+</ul><li style="direction:ltr;">info files</li>
+<ul><li style="direction:ltr;">Display working files and targets in use</li>
+</ul><li style="direction:ltr;">maint info sections</li>
+<ul><li style="direction:ltr;">Display extra information about program sections</li>
+</ul><li style="direction:ltr;">info share</li>
+<ul><li style="direction:ltr;">List names of shared libraries currently loaded</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(77)"><font color="#280099">Commands to Specify Files</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(78)"><font color="#280099">Commands to Specify Files</font></a></p><ul><li style="direction:ltr;">set sysroot <i>path</i></li>
+<ul><li style="direction:ltr;">Set an alternate system root. The system root is used to load absolute shared library symbol files</li>
+<li style="direction:ltr;">If path starts with the sequence remote:, gdb will retrieve the target libraries from the remote system</li>
+</ul><li style="direction:ltr;">set solib-search-path <i>path</i></li>
+<ul><li style="direction:ltr;">Set the search path for loading non-absolute shared library symbol files.</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(79)"><font color="#280099">Debugging Info. in Separate Files</font></a></p><ul><li style="direction:ltr;">2 ways of specifying the separate debug info file</li>
+<ul><li style="direction:ltr;">The executable file includes a <i>debug link</i> section specifying the name (and CRC) of debug info file</li>
+<li style="direction:ltr;">or a <i>build ID</i> section containing a unique bit string that is also present in the corresponding debug info file</li>
+</ul><li style="direction:ltr;">set debug-file-directory <i>directories</i></li>
+<ul><li style="direction:ltr;">Set the directories which gdb searches for separate debugging information files to directory</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(80)"><font color="#280099">Debugging Info. in Separate Files</font></a></p><ul><li style="direction:ltr;">Ex: /usr/bin/ls has a debug link to ls.debug, and a build ID whose value is abcdef1234. If the global debug directory is /usr/lib/debug, then gdb will look for debug info files, in listed order</li>
+<ul><li style="direction:ltr;">/usr/lib/debug/.build-id/ab/cdef1234.debug</li>
+<li style="direction:ltr;">/usr/bin/ls.debug</li>
+<li style="direction:ltr;">/usr/bin/.debug/ls.debug</li>
+<li style="direction:ltr;">/usr/lib/debug/usr/bin/ls.debug</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(81)"><font color="#280099">Debugging Info. in Separate Files</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(82)"><font color="#280099">Connecting to a Remote Target</font></a></p><ul><li style="direction:ltr;">gdb can communicate with the target over a serial line, or over an IP network using TCP or UDP</li>
+<ul><li style="direction:ltr;">tar rem [<i>serial_device</i> | [<i>host</i>]:<i>port</i> | '|'<i> command</i>]</li>
+<ul><li style="direction:ltr;">Use the specified device to communicate with the target</li>
+</ul><li style="direction:ltr;">detach</li>
+<ul><li style="direction:ltr;">Relase target from gdb control and resume its execution</li>
+</ul><li style="direction:ltr;">disconnect</li>
+<ul><li style="direction:ltr;">Like detach, but target is not resumed</li>
+</ul><li style="direction:ltr;">monitor <i>command</i></li>
+<ul><li style="direction:ltr;">send arbitrary commands directly to the remote monitor</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(83)"><font color="#280099">Sending files to a remote system</font></a></p><ul><li style="direction:ltr;">Some remote targets offer the ability to transfer files over the same connection used to communicate with gdb</li>
+<ul><li style="direction:ltr;">remote put <i>local_file remote_file</i></li>
+<li style="direction:ltr;">remote get <i>remote_file local_file</i></li>
+<li style="direction:ltr;">remote delete <i>remote_file</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(84)"><font color="#280099">Using the gdbserver Program</font></a></p><ul><li style="direction:ltr;">gdbserver [<i>opt</i>] <i>comm</i> <i>program</i> [ <i>args</i> ... ]</li>
+<ul><li style="direction:ltr;">Run gdbserver on the target. It must have a copy of the program to be debugged, including any libraries used</li>
+<li style="direction:ltr;">gdbserver does not need your program's symbol table, so you can strip the program if necessary to save space</li>
+</ul><li style="direction:ltr;">gdbserver [<i>opt</i>] --attach <i>comm</i> <i>pid</i></li>
+<ul><li style="direction:ltr;">Attach to a running program</li>
+</ul><li style="direction:ltr;"><i>opt</i>: --wrapper <i>wrapper </i>--</li>
+<ul><li style="direction:ltr;">specifies a wrapper to launch programs</li>
+<li style="direction:ltr;">gdbserver --wrapper env LD_PRELOAD=libtest.so -- :2222 ./testprog</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(85)"><font color="#280099">Multi-Process Mode for gdbserver</font></a></p><ul><li style="direction:ltr;">Normal mode (target remote)</li>
+<ul><li style="direction:ltr;">gdbserver exits if the debugged program exits, or you detach from it</li>
+</ul><li style="direction:ltr;">Multi-process mode (target extended-remote)</li>
+<ul><li style="direction:ltr;">gdb stays connected to gdbserver after the debugged program exits, or you detach from it </li>
+</ul><li style="direction:ltr;">To start gdbserver without supplying an initial command to run or process ID to attach, use the --multi command line option. </li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(86)"><font color="#280099">Remote Configurations</font></a></p><ul><li style="direction:ltr;">set remotebaud <i>n</i></li>
+<ul><li style="direction:ltr;">set the speed of the serial port when debugging using remote targets</li>
+</ul><li style="direction:ltr;">set remote exec-file <i>filename</i></li>
+<ul><li style="direction:ltr;">Set the remote pathname for &quot;run&quot;. This should be set to a filename valid on the target system</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(87)"><font color="#280099">gdbserver Examples</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(88)"><font color="#280099">gdb Text User Interface</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(89)"><font color="#280099">gdb Text User Interface</font></a></p><ul><li style="direction:ltr;">To enter gdbtui</li>
+<ul><li style="direction:ltr;">invoke gdb as either 'gdbtui'</li>
+<li style="direction:ltr;">Use this key 'C-x a' to switch into tui mode</li>
+</ul><li style="direction:ltr;">4 text windows</li>
+<ul><li style="direction:ltr;">Command window: always at the bottom</li>
+<li style="direction:ltr;">Source and assembly window</li>
+<ul><li style="direction:ltr;">mark the current line with a '&gt;'</li>
+<li style="direction:ltr;">Breakpoints are marked with 'bBhH+-'; 'h' indicates a hardware one; '+-' means it is enabled / disabled;  capital letter indicates it was hit at least once</li>
+</ul><li style="direction:ltr;">Register window</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(90)"><font color="#280099">gdbtui Key Bindings</font></a></p><ul><li style="direction:ltr;">C-x a: enter or leave the TUI mode</li>
+<li style="direction:ltr;">C-x 1: use a layout with a window</li>
+<li style="direction:ltr;">C-x 2: use a layout with two window </li>
+<li style="direction:ltr;">C-x o: change the active window</li>
+<li style="direction:ltr;">C-x s: switch in / out of the TUI single key mode</li>
+<li style="direction:ltr;">C-L: refresh the screen</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(91)"><font color="#280099">TUI Single Key Mode</font></a></p><ul><li style="direction:ltr;">Execution control</li>
+<ul><li style="direction:ltr;">c (continue), n (next), s (step), f (finish), r (run)</li>
+</ul><li style="direction:ltr;">Stack examine</li>
+<ul><li style="direction:ltr;">u (up), d (down), v (info locals), w (where=bt)</li>
+</ul><li style="direction:ltr;">Exit single key mode</li>
+<ul><li style="direction:ltr;">q</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(92)"><font color="#280099">TUI-specific commands</font></a></p><ul><li style="direction:ltr;">layout next | prev</li>
+<ul><li style="direction:ltr;">Display the next or previous layout</li>
+</ul><li style="direction:ltr;">layout src | asm</li>
+<ul><li style="direction:ltr;">Display the (source or assembly) window only</li>
+</ul><li style="direction:ltr;">layout split | regs</li>
+<ul><li style="direction:ltr;">Display two window; split for source and assembly ones; regs for register and (source/assembly) ones</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(93)"><font color="#280099">TUI-specific commands</font></a></p><ul><li style="direction:ltr;">focus next | prev</li>
+<ul><li style="direction:ltr;">Make the next or previous window active for scrolling</li>
+</ul><li style="direction:ltr;">focus src | asm | regs | cmd</li>
+<li style="direction:ltr;">tui reg float | general | system | next</li>
+<ul><li style="direction:ltr;">Show the specified registers in the register window</li>
+</ul><li style="direction:ltr;">refresh</li>
+<ul><li style="direction:ltr;">Refresh the screen. This is similar to typing C-L</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(94)"><font color="#280099">Process Record and Replay</font></a></p><ul><li style="direction:ltr;">Gdb provides a special process record and replay target that can record a log of the process execution</li>
+<li style="direction:ltr;">When this target is in use, gdb debug in</li>
+<ul><li style="direction:ltr;"><i>Replay mode</i>, if the execution log includes the record for the next instruction</li>
+<li style="direction:ltr;"><i>Record mode</i>, If the record for the next instruction is not in the execution log</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(95)"><font color="#280099">Process Record and Replay</font></a></p><ul><li style="direction:ltr;">target record (rec)</li>
+<ul><li style="direction:ltr;">Starts the process record and replay target (can only debug a running process)</li>
+</ul><li style="direction:ltr;">record stop</li>
+<ul><li style="direction:ltr;">Stop the process record and replay target, and delete the entire execution log</li>
+</ul><li style="direction:ltr;">record save | restore <i>filename</i></li>
+<ul><li style="direction:ltr;">Save/restore execution log to/from a file</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(96)"><font color="#280099">Process Record and Replay</font></a></p><ul><li style="direction:ltr;">record goto <i>N</i></li>
+<ul><li style="direction:ltr;">Restore the program to its state at instruction number <i>N</i></li>
+</ul><li style="direction:ltr;">set record insn-number-max <i>limit</i></li>
+<ul><li style="direction:ltr;">Set the maximum number of instructions to be stored in the record/replay buffer. Default: 200000, 0 = unlimited</li>
+</ul><li style="direction:ltr;">info record</li>
+<ul><li style="direction:ltr;">Show statistics about the state of process record and its in-memory execution log buffer</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(97)"><font color="#280099">Process Record and Replay</font></a></p></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(98)"><font color="#280099">Running programs backward</font></a></p><ul><li style="direction:ltr;">Undo the changes that have taken place</li>
+<ul><li style="direction:ltr;">Variables, registers etc. revert to their previous values</li>
+</ul><li style="direction:ltr;">Reverse execution will stop for breakpoints and exceptions (signals), just like normal execution.</li>
+<ul><li style="direction:ltr;">reverse-continue(rc) [<i>ignore-count</i>]</li>
+<li style="direction:ltr;">reverse-step(rs) [<i>count</i>]</li>
+<li style="direction:ltr;">reverse-next(rn) [<i>count</i>]</li>
+<li style="direction:ltr;">reverse-finish</li>
+<ul><li style="direction:ltr;">Execute backward until just before selected stack frame is called</li>
+</ul></ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(99)"><font color="#280099">Tracepoints</font></a></p><ul><li style="direction:ltr;">Tracepoints are to observe the program's behavior without interrupting it</li>
+<ul><li style="direction:ltr;">Delays introduced by a debugger might cause the program to change its behavior drastically</li>
+<li style="direction:ltr;">Available only for remote targets (gdbserver, kgtp)</li>
+</ul><li style="direction:ltr;">Quick start</li>
+<ul><li style="direction:ltr;">Specify where to put the tracepoint (trace)</li>
+<li style="direction:ltr;">Specify what data to collect at the tracepoint (actions)</li>
+<li style="direction:ltr;">Start a trace experiment (tstart) and stop (tstop) it after data desired is collected</li>
+<li style="direction:ltr;">Analyze collected data (tfind, tdump)</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(100)"><font color="#280099">Set Tracepoints</font></a></p><ul><li style="direction:ltr;">trace(tr) [<i>location</i>] [thread <i>no</i>] [if <i>condition</i>]</li>
+<ul><li style="direction:ltr;">Set a tracepoint at specified line or function</li>
+<li style="direction:ltr;">doesn't take effect until the next tstart command</li>
+</ul><li style="direction:ltr;">Fast tracepoints (ftrace) use a more efficient but less general technique to trigger data collection, such as a jump instruction instead of a trap</li>
+<li style="direction:ltr;">delete tracepoint [<i>num</i>]</li>
+<li style="direction:ltr;">enable tracepoint [<i>num</i>]</li>
+<li style="direction:ltr;">disable tracepoint [<i>num</i>]</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(101)"><font color="#280099">Tracepoint Passcounts</font></a></p><ul><li style="direction:ltr;">passcount <i>n</i> [<i>num</i>]</li>
+<ul><li style="direction:ltr;">Set the passcount of a tracepoint. The trace experiment will be automatically stopped on the <i>n</i>'th time the tracepoint is hit</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(102)"><font color="#280099">Tracepoint Conditions</font></a></p><ul><li style="direction:ltr;">A tracepoint with condition evaluates the expression each time your program reaches it, and data collection happens only if the condition is true</li>
+<ul><li style="direction:ltr;">The condition is evaluated by the remote target</li>
+</ul><li style="direction:ltr;">In cases like the example given below, an unconditional tracepoint could end up collecting thousands of useless trace frames that you would have to search through</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(103)"><font color="#280099">Trace State Variables</font></a></p><ul><li style="direction:ltr;">A special type of variable that is created and managed by target-side code</li>
+<li style="direction:ltr;">The syntax is the same as that for GDB's convenience variables (a string prefixed with '$'), but they are stored on the target</li>
+<li style="direction:ltr;">They must be created explicitly, using a tvariable command</li>
+<li style="direction:ltr;">They are always 64-bit signed integers</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(104)"><font color="#280099">Trace State Variables</font></a></p><ul><li style="direction:ltr;">tvariable $<i>name</i> [ = <i>expression</i> ]</li>
+<ul><li style="direction:ltr;">Define a trace state variable.</li>
+</ul><li style="direction:ltr;">info tvariables</li>
+<ul><li style="direction:ltr;">List all the trace state variables along with their initial values &amp; current values.</li>
+</ul><li style="direction:ltr;">delete tvariable [ $<i>name</i> ... ]</li>
+<ul><li style="direction:ltr;">Delete the given trace state variables, or all of them if no arguments are specified. </li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(105)"><font color="#280099">Tracepoint Actions</font></a></p><ul><li style="direction:ltr;">actions [<i>num</i>]</li>
+<ul><li style="direction:ltr;">Specify the actions to be taken at a tracepoint</li>
+<li style="direction:ltr;">one action at a line, terminate the actions list with a line containing just 'end'; so far, the only defined actions are collect, teval, and while-stepping</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(106)"><font color="#280099">Tracepoint Actions</font></a></p><ul><li style="direction:ltr;">collect <i>expr1</i>, <i>expr2</i>, ...</li>
+<ul><li style="direction:ltr;">Specify one or more data items to be collected at a tracepoint; <i>expr</i> can also be one of these: </li>
+<ul><li style="direction:ltr;">$regs, $args, $locals</li>
+</ul></ul><li style="direction:ltr;">teval <i>expr1</i>, <i>expr2</i>, ...</li>
+<ul><li style="direction:ltr;">Evaluate the expressions when the tracepoint is hit. </li>
+<li style="direction:ltr;">The results are discarded, so this is mainly useful for assigning values to trace state variables without adding those values to the trace buffer, as would be the case if the collect action were used</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(107)"><font color="#280099">Tracepoint Actions</font></a></p><ul><li style="direction:ltr;">while-stepping <i>n</i></li>
+<ul><li style="direction:ltr;">Perform <i>n</i> single-step instruction traces after the tracepoint, collecting new data after each step</li>
+<li style="direction:ltr;">This command is normally followed by collect commands, to specify what to collect</li>
+</ul><li style="direction:ltr;">set default-collect <i>expr1</i>, <i>expr2</i>, ...</li>
+<ul><li style="direction:ltr;">Set the list of expressions to collect by default</li>
+</ul><li style="direction:ltr;">show default-collect</li>
+</ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(108)"><font color="#280099">Listing Tracepoints</font></a></p><ul><li style="direction:ltr;">info tracepoints(info tp) [<i>num...</i>]</li>
+<ul><li style="direction:ltr;">Display information about the tracepoint <i>num</i></li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(109)"><font color="#280099">Starting and Stopping 
+Trace Experiments</font></a></p><ul><li style="direction:ltr;">tstart</li>
+<ul><li style="direction:ltr;">Starts the trace experiment, and begins collecting data</li>
+<li style="direction:ltr;">Discards all the data collected in the trace buffer during the previous trace experiment</li>
+</ul><li style="direction:ltr;">tstop</li>
+<ul><li style="direction:ltr;">Ends the trace experiment, and stops collecting data</li>
+<li style="direction:ltr;">Trace experiment may stop automatically if any tracepoint's passcount is reached</li>
+</ul><li style="direction:ltr;">tstatus</li>
+<ul><li style="direction:ltr;">displays the status of the current trace data collection</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(110)"><font color="#280099">Starting and Stopping 
+Trace Experiments</font></a></p><ul><li style="direction:ltr;">set disconnected-tracing on | off</li>
+<ul><li style="direction:ltr;">Choose if tracing continues after gdb disconnects</li>
+</ul><li style="direction:ltr;">set circular-trace-buffer on | off</li>
+<ul><li style="direction:ltr;">Make the trace buffer into a circular buffer, which will discard oldest traceframes instead of filling up and stopping the trace run</li>
+</ul></ul></div>
+<div align="left"><p style="direction:ltr;"><a href="JavaScript:parent.NavigateAbs(111)"><font color="#280099">Tracepoint Restrictions</font></a></p><ul><li style="direction:ltr;">Tracepoint expressions are intended to gather objects (lvalues)</li>
+<ul><li style="direction:ltr;">You cannot call functions, access to convenience variables or modify values (except trace state variables)</li>
+</ul><li style="direction:ltr;">Collection of local variables du
